@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+using UnityEngine.UI;
 public class MainAnimController : MonoBehaviour {
 
 	static Animator anim;
@@ -12,30 +12,44 @@ public class MainAnimController : MonoBehaviour {
 	public float rotateSpeed = 5;
 	Vector3 offset;
 	private bool IsRunning, IsShooting, Dancing, IsCrouching, Jump, IsGathering, IsReloading, RiflePunch;
+	public float time = .6f;
+	public float timer;
+	public Text counttext;
+	public Text wintext;
+	private int countt;
+
+
+	public Rigidbody projectile;
+	public float speed1=20; 
+	public float range = 100f;
+	public float damage = 10f;
+	public Camera fpscam;
+
+	public AudioSource audioSource;
+	public AudioClip audioClip;
+
+
+
 
 	// Use this for initialization
 	void Start () {
 		anim = GetComponent<Animator> ();
-		offset = target.transform.position - transform.position;
+		timer = time;
+		SetCountText ();
+		wintext.text = "";
+		countt = 0;
+
 
 	}
 		
 
-	void LateUpdate() {
-		float horizontal = Input.GetAxis("Mouse X") * rotateSpeed;
-		target.transform.Rotate(0, horizontal, 0);
 
-		float desiredAngle = target.transform.eulerAngles.y;
-		Quaternion rotation = Quaternion.Euler(0, desiredAngle, 0);
-		transform.position = target.transform.position - (rotation * offset);
 
-		transform.LookAt(target.transform);
-	}
 
 	// Update is called once per frame
 	void Update () {
-		float translation = Input.GetAxis ("Vertical")*speed;
-		float rotation = Input.GetAxis ("Horizontal")*rotationSpeed;
+		float translation = Input.GetAxis ("Vertical") * speed;
+		float rotation = Input.GetAxis ("Horizontal") * rotationSpeed;
 		translation *= Time.deltaTime;
 		rotation *= Time.deltaTime;
 
@@ -43,10 +57,10 @@ public class MainAnimController : MonoBehaviour {
 		transform.Translate (0, 0, translation);
 		transform.Rotate (0, rotation, 0);
 
-		if(translation != 0){
+		if (translation != 0) {
 			anim.SetBool ("IsWalking", true);
 			speed = 5.0f;
-		} else{
+		} else {
 			anim.SetBool ("IsWalking", false);
 		}
 
@@ -61,12 +75,6 @@ public class MainAnimController : MonoBehaviour {
 			IsCrouching = true;
 		} else {
 			IsCrouching = false;
-		}
-
-		if (Input.GetKey (KeyCode.Mouse0)) {
-			IsShooting = true;
-		} else {
-			IsShooting = false;
 		}
 
 		if (Input.GetKey (KeyCode.Space)) {
@@ -93,11 +101,20 @@ public class MainAnimController : MonoBehaviour {
 			IsReloading = false;
 		}
 
-		if (Input.GetKey (KeyCode.Backslash)) {
+		if (Input.GetKey (KeyCode.V)) {
 			Dancing = true;
 		} else {
 			Dancing = false;
 		}
+			
+		if (Input.GetKey (KeyCode.Mouse0)) {
+				IsShooting = true;
+				;
+			} else {
+				IsShooting = false;
+		}
+	
+
 
 		anim.SetBool ("IsRunning", IsRunning);
 		anim.SetBool ("IsShooting", IsShooting);
@@ -107,6 +124,44 @@ public class MainAnimController : MonoBehaviour {
 		anim.SetBool ("IsGathering", IsGathering);
 		anim.SetBool ("IsCrouching", IsCrouching);
 		anim.SetBool ("RiflePunch", RiflePunch);
-	
+
+		timer -= Time.deltaTime;
+		if (timer < 0) {
+			if (Input.GetKey (KeyCode.Mouse0)) {
+				Shoot();
+				timer = time;
+
+			}
+		}
+	}
+	void Shoot()
+	{
+		RaycastHit hit;
+		if (Physics.Raycast (fpscam.transform.position, fpscam.transform.forward, out hit, range)) {
+			Debug.Log (hit.transform.name);
+		}
+		playClip ();
+
+	}
+	void OnTriggerEnter(Collider other) 
+	{
+		if (other.gameObject.CompareTag ("PickUp"))
+		{
+			other.gameObject.SetActive (false);
+			countt = countt + 1;
+			SetCountText ();
+		}
+	}
+	void SetCountText()
+	{
+		counttext.text="Bottles of Tea Collected: " + countt.ToString() + "/3";
+		if (countt >= 3) {
+			wintext.text = "The War is won! Tea has influenced the tides of the war in your favor! Spam the V Button to celebrate!";
+
+		}
+	}
+	public void playClip(){
+		audioSource.clip = audioClip;
+		audioSource.Play();
 	}
 }

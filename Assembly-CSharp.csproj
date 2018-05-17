@@ -51,12 +51,14 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+     <Compile Include="Assets\Scripts\bullet.cs" />
+     <Compile Include="Assets\Scripts\CameraFollow.cs" />
+     <Compile Include="Assets\Scripts\EnemyAI.cs" />
+     <Compile Include="Assets\Scripts\enemymanager.cs" />
+     <Compile Include="Assets\Scripts\LoadOnClicked.cs" />
      <Compile Include="Assets\Scripts\MainAnimController.cs" />
-     <Compile Include="Assets\Yurowm\Demo\Scripts\Actions.cs" />
-     <Compile Include="Assets\Yurowm\Demo\Scripts\CharacterPanel.cs" />
-     <Compile Include="Assets\Yurowm\Demo\Scripts\CharacterViewer.cs" />
-     <Compile Include="Assets\Yurowm\Demo\Scripts\PlayerController.cs" />
-     <None Include="Assets\Yurowm\Shaders\SkinShader.shader" />
+     <Compile Include="Assets\Scripts\pause.cs" />
+     <Compile Include="Assets\Scripts\Weapon.cs" />
      <None Include="Assets\MedievalTownExteriors\Readme.txt" />
  <Reference Include="UnityEngine.UIAutomation">
  <HintPath>/Applications/Unity/Unity.app/Contents/UnityExtensions/Unity/UIAutomation/UnityEngine.UIAutomation.dll</HintPath>
